@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 with open("README.md", "r", encoding="utf8") as readme_file:
     readme = readme_file.read()
 
-requirements = ["click>=8"]
+requirements = ["click>=8", "pygithub>=1.55", "pyyamml>=6.0"]
 
 setup(
     name="git-prune-rebase",

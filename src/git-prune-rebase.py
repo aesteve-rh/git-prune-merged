@@ -18,6 +18,14 @@ def cli():
 
 
 @click.command()
+def config():
+    """
+    Setup the configuration file to use.
+    """
+    print("Setup configuration")
+
+
+@click.command()
 def lsbr():
     """
     List all branches (local or remote) that have been merged.
@@ -33,6 +41,7 @@ def prune():
     print("Prune all branches")
 
 
+cli.add_command(config)
 cli.add_command(lsbr)
 cli.add_command(prune)
 
