@@ -1,3 +1,24 @@
+# Ignore all hidden files by default
 .*
-
+# Explicitely include these hidden files
 !.gitignore
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+*.egg
+MANIFEST
+
+*__pycache__*
