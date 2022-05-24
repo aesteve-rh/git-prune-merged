@@ -1,4 +1,4 @@
-# git-prune-rebase
+# git-prune-merged
 
 Git plugin to help you keep repository clean from the command line, by
 pruning local and remote branches that have been integrated by rebasing in GitHub.
@@ -8,8 +8,8 @@ pruning local and remote branches that have been integrated by rebasing in GitHu
 Currently the package is not yet available through PyPI. Therefore, you need
 to clone and install from source.
 
-    git clone https://github.com/aesteve-rh/git-prune-rebase.git
-    pip install git-prune-rebase/.
+    git clone https://github.com/aesteve-rh/git-prune-merged.git
+    pip install git-prune-merged/.
 
 ## Basic usage
 
@@ -20,17 +20,17 @@ Pull Requests is required. Usually, this is the repository in
 which you are currently working, but in forked repositories this needs
 to be the upstream repository name.
 
-    git prune-rebase config -- token <token_id> -- repo 'repo/name'
+    git prune-merged config -- token <token_id> -- repo 'repo/name'
 
 Print the help to get a glimpse of all the commands, arguments and flags:
 
-    git prune-rebase -h
+    git prune-merged -h
 
 List all branches that would be pruned. Make sure to have fetched your remote
-before running 'prune-rebase' if you have recently integrated a branch that
+before running 'prune-merged' if you have recently integrated a branch that
 you expect to be pruned.
 
-    git prune-rebase ls
+    git prune-merged ls
     [I] Local branches that will be pruned:
     [I]     dev-branch1
     [I]     dev-branch2
@@ -45,7 +45,7 @@ you expect to be pruned.
 
 Prune all remote branches:
 
-    git prune-rebase pr -r
+    git prune-merged pr -r
     [I] Going to remove origin/dev-branch1
         Are you sure? [Y/n]
     [I] [deleted] .... origin/dev-branch1
@@ -61,7 +61,7 @@ Prune all remote branches:
 
 Prune all branches (local and remote) and do not ask for confirmation:
 
-    git prune-rebase pr --all --yes
+    git prune-merged pr --all --yes
     [I] [deleted] .... origin/dev-branch3
     [I] [deleted] .... origin/dev-branch4
     [I] [deleted] .... dev-branch1

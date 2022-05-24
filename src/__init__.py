@@ -38,7 +38,7 @@ def add_file_handler():
     Create and add a FileHandler to log debug messages into a file.
     """
     # create file handler which logs even debug messages
-    fh = logging.FileHandler('.prune-rebase.log')
+    fh = logging.FileHandler('.prune-merged.log')
     fh.setLevel(logging.DEBUG)
     # create formatter and add it to the handlers
     fh.setFormatter(

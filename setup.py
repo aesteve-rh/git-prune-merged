@@ -6,19 +6,19 @@ with open("README.md", "r", encoding="utf8") as readme_file:
 requirements = ["Click", "gitpython>3.1", "pygithub>=1.55", "pyyaml>=6.0"]
 
 setup(
-    name="git-prune-rebase",
+    name="git-prune-merged",
     version="0.0.1",
     author="Albert Esteve",
     author_email="aesteve@redhat.com",
     description="A git plugin to prune local and remote branches",
     long_description=readme,
     long_description_content_type="text/markdown",
-    url="https://github.com/aesteve-rh/git-prune-rebase",
+    url="https://github.com/aesteve-rh/git-prune-merged",
     packages=find_packages(),
     install_requires=requirements,
     entry_points={
         'console_scripts': [
-            'git-prune-rebase=src.main:cli',
+            'git-prune-merged=src.main:cli',
         ],
     },
     classifiers=[
