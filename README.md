@@ -1,7 +1,7 @@
 # git-prune-merged
 
 Git plugin to help you keep repository clean from the command line, by
-pruning local and remote branches that have been integrated by rebasing in GitHub.
+pruning local and remote branches that have been integrated in GitHub.
 
 ## Installation
 
@@ -45,7 +45,7 @@ you expect to be pruned.
 
 Prune all remote branches:
 
-    git prune-merged pr -r
+    git prune-merged -r
     [I] Going to remove origin/dev-branch1
         Are you sure? [Y/n]
     [I] [deleted] .... origin/dev-branch1
@@ -59,9 +59,9 @@ Prune all remote branches:
         Are you sure? [Y/n] n
     [I] Skipping origin/dev-branch4
 
-Prune all branches (local and remote) and do not ask for confirmation:
+Do a dry-run simulation for prunning all branches (local and remote), and do not ask for confirmation:
 
-    git prune-merged pr --all --yes
+    git prune-merged --all --yes --dry-run
     [I] [deleted] .... origin/dev-branch3
     [I] [deleted] .... origin/dev-branch4
     [I] [deleted] .... dev-branch1
@@ -93,6 +93,7 @@ wrongfully pruned branches.
 
 - Never remove a branch without a confirmation or the `--yes` flag.
 - Posibility to print all branches that will be pruned before running the command.
+- Dry-run option to safely pre-verify what would be removed.
 - Using SHAs to ensure that the branches that will be pruned are the ones that were
 integrated.
 
