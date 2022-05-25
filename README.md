@@ -30,14 +30,14 @@ List all branches that would be pruned. Make sure to have fetched your remote
 before running 'prune-merged' if you have recently integrated a branch that
 you expect to be pruned.
 
-    git prune-merged ls
-    [I] Local branches that will be pruned:
+    $ git prune-merged ls
+    [I] There are 5 local branches that can be pruned:
     [I]     dev-branch1
     [I]     dev-branch2
     [I]     dev-branch3
     [I]     dev-branch4
     [I]     dev-branch5
-    [I] Remote branches that will be pruned:
+    [I] There are 4 remote branches that can be pruned:
     [I]     origin/dev-branch1
     [I]     origin/dev-branch2
     [I]     origin/dev-branch3
@@ -45,7 +45,7 @@ you expect to be pruned.
 
 Prune all remote branches:
 
-    git prune-merged -r
+    $ git prune-merged -r
     [I] Going to remove origin/dev-branch1
         Are you sure? [Y/n]
     [I] [deleted] .... origin/dev-branch1
@@ -58,17 +58,20 @@ Prune all remote branches:
     [I] Going to remove origin/dev-branch4
         Are you sure? [Y/n] n
     [I] Skipping origin/dev-branch4
+    [I] All (2) remote branches pruned.
 
 Do a dry-run simulation for prunning all branches (local and remote), and do not ask for confirmation:
 
-    git prune-merged --all --yes --dry-run
+    $ git prune-merged --all --yes --dry-run
     [I] [deleted] .... origin/dev-branch3
     [I] [deleted] .... origin/dev-branch4
+    [I] All (2) remote branches pruned.
     [I] [deleted] .... dev-branch1
     [I] [deleted] .... dev-branch2
     [I] [deleted] .... dev-branch3
     [I] [deleted] .... dev-branch4
     [I] [deleted] .... dev-branch5
+    [I] All (5) local branches pruned.
 
 ## How it works
 
