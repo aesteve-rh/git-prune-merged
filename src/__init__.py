@@ -1,5 +1,9 @@
 import logging
 
+
+__version__ = '0.4.1'
+
+
 class CustomFormatter(logging.Formatter):
     """
     Custom logging formatter with colors.
@@ -22,6 +26,7 @@ class CustomFormatter(logging.Formatter):
         log_fmt = self.FORMATS.get(record.levelno)
         return logging.Formatter(log_fmt).format(record)
 
+
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
@@ -32,6 +37,7 @@ ch.setLevel(logging.INFO)
 ch.setFormatter(CustomFormatter())
 # add the handlers to the logger
 log.addHandler(ch)
+
 
 def add_file_handler():
     """

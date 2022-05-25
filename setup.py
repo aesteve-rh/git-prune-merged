@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+import src
 
 with open("README.md", "r", encoding="utf8") as readme_file:
     readme = readme_file.read()
@@ -7,7 +8,7 @@ requirements = ["Click", "gitpython>3.1", "pygithub>=1.55", "pyyaml>=6.0"]
 
 setup(
     name="git-prune-merged",
-    version="0.0.1",
+    version=src.__version__,
     author="Albert Esteve",
     author_email="aesteve@redhat.com",
     description="A git plugin to prune local and remote branches",
