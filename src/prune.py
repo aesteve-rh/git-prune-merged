@@ -28,6 +28,7 @@ def prune_remote(config: Path, yes: bool, dry_run: bool,
     if gh_pr is None:
         gh_pr = _get_github_merged_prs(config)
 
+    deleted = 0
     repo = Repo()
     for gh_pr in gh_pr:
         remote_name = f'origin/{gh_pr.head.ref}'
@@ -44,11 +45,12 @@ def prune_remote(config: Path, yes: bool, dry_run: bool,
                 log.debug("Removing %s...", remote_name)
                 if not dry_run:
                     repo.remote().push(refspec=(f":{gh_pr.head.ref}"))
+                deleted += 1
                 log.info("[deleted] .... %s", remote_name)
             else:
                 log.info("Skipping %s", remote_name)
 
-    log.debug("All remote branches pruned.")
+    log.info("All (%s) remote branches pruned.", deleted)
 
 
 def prune_local(config: Path, yes: bool, dry_run: bool,
@@ -56,6 +58,7 @@ def prune_local(config: Path, yes: bool, dry_run: bool,
     if gh_pr is None:
         gh_pr = _get_github_merged_prs(config)
 
+    deleted = 0
     repo = Repo()
     for head in repo.heads:
         if any(head.commit.hexsha == gh_pr.head.sha for gh_pr in gh_pr):
@@ -66,10 +69,11 @@ def prune_local(config: Path, yes: bool, dry_run: bool,
                 try:
                     if not dry_run:
                         Reference.delete(repo, head.path)
+                    deleted += 1
                     log.info("[deleted] .... %s", head.name)
                 except Exception:
                     log.error("%s", head, exc_info=True)
             else:
                 log.info("Skipping %s", head.name)
 
-    log.debug("All local branches pruned.")
+    log.info("All (%s) local branches pruned.", deleted)

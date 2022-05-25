@@ -28,20 +28,39 @@ def _get_github_merged_prs(config: Path) -> List['github.PullRequest']:
         gh = Github(username, pword)
         del pword
 
+    # Get PRs (issues of type PR) that pertain to the GitHub user, for this
+    # specific repo. Select those that are closed and merged.
     issues = [pr.as_pull_request() for pr in gh.search_issues('', state='closed',
               author=gh.get_user().login, repo=loaded_conf.get('repo'), type='pr')]
     return [pr for pr in issues if pr.merged]
 
 
+def log_branch_list(branch_loc: str, branches: List[str]) -> None:
+    if len(branches) > 0:
+        log.info(
+            'There are %s %s branches that can be pruned:',
+            len(branches),
+            branch_loc)
+        for branch_name in branches:
+            log.info("\t%s", branch_name)
+    else:
+        log.info('No %s branches to prune.', branch_loc)
+
+
 def list_branches(config: Path) -> None:
     gh_merged = _get_github_merged_prs(config)
     repo = Repo()
-    log.info('Local branches that will be pruned:')
+    # Loop through local head commits and compare its SHA against GitHub head SHA.
+    local_branches = []
     for head in repo.heads:
         if any(head.commit.hexsha == gh_pr.head.sha for gh_pr in gh_merged):
-            log.info("\t%s", head.name)
+            local_branches.append(head.name)
+    # Log local branches found.
+    log_branch_list("local", local_branches)
 
-    log.info('Remote branches that will be pruned:')
+    # Loop through GitHub PRs and rev_parse the remote branch name to be able
+    # to compare the SHAs.
+    remote_branches = []
     for gh_pr in gh_merged:
         remote_name = f'origin/{gh_pr.head.ref}'
         try:
@@ -50,4 +69,6 @@ def list_branches(config: Path) -> None:
             continue
 
         if str(sha) == gh_pr.head.sha:
-            log.info("\t%s", remote_name)
+            remote_branches.append(remote_name)
+    # Log remote branches found.
+    log_branch_list("remote", remote_branches)
