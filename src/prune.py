@@ -23,7 +23,7 @@ def _prompt_confirmation(branch_name: str) -> bool:
             return False
 
 
-def prune_remote(config: Path, yes: bool,
+def prune_remote(config: Path, yes: bool, dry_run: bool,
                  gh_pr: Optional[List['github.PullRequest']] = None):
     if gh_pr is None:
         gh_pr = _get_github_merged_prs(config)
@@ -42,7 +42,8 @@ def prune_remote(config: Path, yes: bool,
                 answer = _prompt_confirmation(remote_name)
             if answer:
                 log.debug("Removing %s...", remote_name)
-                repo.remote().push(refspec=(f":{gh_pr.head.ref}"))
+                if not dry_run:
+                    repo.remote().push(refspec=(f":{gh_pr.head.ref}"))
                 log.info("[deleted] .... %s", remote_name)
             else:
                 log.info("Skipping %s", remote_name)
@@ -50,7 +51,7 @@ def prune_remote(config: Path, yes: bool,
     log.debug("All remote branches pruned.")
 
 
-def prune_local(config: Path, yes: bool,
+def prune_local(config: Path, yes: bool, dry_run: bool,
                 gh_pr: Optional[List['github.PullRequest']] = None):
     if gh_pr is None:
         gh_pr = _get_github_merged_prs(config)
@@ -63,7 +64,8 @@ def prune_local(config: Path, yes: bool,
                 answer = _prompt_confirmation(head.name)
             if answer:
                 try:
-                    Reference.delete(repo, head.path)
+                    if not dry_run:
+                        Reference.delete(repo, head.path)
                     log.info("[deleted] .... %s", head.name)
                 except Exception:
                     log.error("%s", head, exc_info=True)

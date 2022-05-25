@@ -46,7 +46,10 @@ def print_version(ctx, param, value):
 @click.option('--all', is_flag=True, default=False,
               help='Prune both remote and local merged branches.')
 @click.option('--yes', is_flag=True, default=False, help='Do not ask for confirmation.')
-def cli(ctx, debug: bool, config: Path, local: bool, all: bool, yes: bool) -> None:
+@click.option('--dry-run', is_flag=True, default=False,
+              help='Simulated run, do not delete branches.')
+def cli(ctx, debug: bool, config: Path, local: bool,
+        all: bool, yes: bool, dry_run: bool) -> None:
     """
     Prune local and remote branches that have been merged, even if it
     has been merged by rebasing.
@@ -59,14 +62,15 @@ def cli(ctx, debug: bool, config: Path, local: bool, all: bool, yes: bool) -> No
     if debug:
         add_file_handler()
     if ctx.invoked_subcommand is None:
+        # With no subcommmand, we prune the branches
         if all:
             gh_pr = _get_github_merged_prs(config)
-            prune_remote(config, yes, gh_pr)
-            prune_local(config, yes, gh_pr)
+            prune_remote(config, yes, dry_run, gh_pr)
+            prune_local(config, yes, dry_run, gh_pr)
         elif local:
-            prune_local(config, yes)
+            prune_local(config, yes, dry_run)
         else:
-            prune_remote(config, yes)
+            prune_remote(config, yes, dry_run)
 
 
 @cli.command()
