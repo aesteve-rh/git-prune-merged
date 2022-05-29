@@ -43,6 +43,13 @@ you expect to be pruned.
     [I]     origin/dev-branch3
     [I]     origin/dev-branch4
 
+List branches older than 3 months:
+    
+    $ git prune-merged ls --months 3
+    [I] No local branches to prune.
+    [I] No remote branches to prune.
+
+
 Prune all remote branches:
 
     $ git prune-merged -r
@@ -99,6 +106,7 @@ wrongfully pruned branches.
 - Dry-run option to safely pre-verify what would be removed.
 - Using SHAs to ensure that the branches that will be pruned are the ones that were
 integrated.
+- Allow to prune only older branches to month granularity.
 
 ## Support
 
