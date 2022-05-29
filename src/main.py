@@ -45,11 +45,13 @@ def print_version(ctx, param, value):
               help='Select to prune only local or remote merged branches.')
 @click.option('--all', is_flag=True, default=False,
               help='Prune both remote and local merged branches.')
+@click.option('--months', type=int, default=0,
+              help='Select PRs older than specified months.')
 @click.option('--yes', is_flag=True, default=False, help='Do not ask for confirmation.')
 @click.option('--dry-run', is_flag=True, default=False,
               help='Simulated run, do not delete branches.')
 def cli(ctx, debug: bool, config: Path, local: bool,
-        all: bool, yes: bool, dry_run: bool) -> None:
+        all: bool, months: int, yes: bool, dry_run: bool) -> None:
     """
     Prune local and remote branches that have been merged, even if it
     has been merged by rebasing.
@@ -63,14 +65,11 @@ def cli(ctx, debug: bool, config: Path, local: bool,
         add_file_handler()
     if ctx.invoked_subcommand is None:
         # With no subcommmand, we prune the branches
-        if all:
-            gh_pr = _get_github_merged_prs(config)
-            prune_remote(config, yes, dry_run, gh_pr)
+        gh_pr = _get_github_merged_prs(config, months)
+        if local or all:
             prune_local(config, yes, dry_run, gh_pr)
-        elif local:
-            prune_local(config, yes, dry_run)
-        else:
-            prune_remote(config, yes, dry_run)
+        if not local or all:
+            prune_remote(config, yes, dry_run, gh_pr)
 
 
 @cli.command()
@@ -100,9 +99,11 @@ def config(
 @exception_handler
 @click.option('--config', '-c', type=click.Path(dir_okay=False, exists=True),
               default=DEFAULT_CFG_PATH, help='Path to the config file.')
-def ls(config: Path) -> None:
+@click.option('--months', type=int, default=0,
+              help='Select PRs older than specified months.')
+def ls(config: Path, months: int) -> None:
     # pylint: disable=invalid-name
     """
     List branches that will be deleted in a prune.
     """
-    list_branches(config)
+    list_branches(config, months)

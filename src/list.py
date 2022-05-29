@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import List
 
 import yaml
+from datetime import datetime
 from git import Repo
 from gitdb.exc import BadName
 from github import Github
@@ -15,7 +16,12 @@ from github import Github
 from . import log
 
 
-def _get_github_merged_prs(config: Path) -> List['github.PullRequest']:
+def months_old(date: datetime) -> int:
+    now = datetime.now()
+    return (now.year - date.year) * 12 + now.month - date.month
+
+
+def _get_github_merged_prs(config: Path, months: int) -> List['github.PullRequest']:
     with open(config, 'r', encoding='utf-8') as conf_file:
         loaded_conf = yaml.safe_load(conf_file)
 
@@ -32,6 +38,11 @@ def _get_github_merged_prs(config: Path) -> List['github.PullRequest']:
     # specific repo. Select those that are closed and merged.
     issues = [pr.as_pull_request() for pr in gh.search_issues('', state='closed',
               author=gh.get_user().login, repo=loaded_conf.get('repo'), type='pr')]
+    if months:
+        return [pr for pr in issues
+                if pr.merged and
+                (pr.closed_at is None or months_old(pr.closed_at) >= months)]
+
     return [pr for pr in issues if pr.merged]
 
 
@@ -47,8 +58,8 @@ def log_branch_list(branch_loc: str, branches: List[str]) -> None:
         log.info('No %s branches to prune.', branch_loc)
 
 
-def list_branches(config: Path) -> None:
-    gh_merged = _get_github_merged_prs(config)
+def list_branches(config: Path, months: int) -> None:
+    gh_merged = _get_github_merged_prs(config, months)
     repo = Repo()
     # Loop through local head commits and compare its SHA against GitHub head SHA.
     local_branches = []

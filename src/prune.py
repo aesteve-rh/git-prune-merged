@@ -4,13 +4,12 @@
 # Please see the LICENSE file
 
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 from git import Reference, Repo
 from gitdb.exc import BadName
 
 from . import log
-from .list import _get_github_merged_prs
 
 
 def _prompt_confirmation(branch_name: str) -> bool:
@@ -24,10 +23,7 @@ def _prompt_confirmation(branch_name: str) -> bool:
 
 
 def prune_remote(config: Path, yes: bool, dry_run: bool,
-                 gh_pr: Optional[List['github.PullRequest']] = None):
-    if gh_pr is None:
-        gh_pr = _get_github_merged_prs(config)
-
+                 gh_pr: List['github.PullRequest']):
     deleted = 0
     repo = Repo()
     for gh_pr in gh_pr:
@@ -54,10 +50,7 @@ def prune_remote(config: Path, yes: bool, dry_run: bool,
 
 
 def prune_local(config: Path, yes: bool, dry_run: bool,
-                gh_pr: Optional[List['github.PullRequest']] = None):
-    if gh_pr is None:
-        gh_pr = _get_github_merged_prs(config)
-
+                gh_pr: List['github.PullRequest']):
     deleted = 0
     repo = Repo()
     for head in repo.heads:
