@@ -5,11 +5,9 @@ pruning local and remote branches that have been integrated in GitHub.
 
 ## Installation
 
-Currently the package is not yet available through PyPI. Therefore, you need
-to clone and install from source.
+The package is available through PyPI.
 
-    git clone https://github.com/aesteve-rh/git-prune-merged.git
-    pip install git-prune-merged/.
+    pip install git-prune-merged
 
 ## Basic usage
 
