@@ -3,12 +3,17 @@
 # This file is licensed under the GNU General Public License.
 # Please see the LICENSE file
 
+"""
+Offers utility functions to obtain and log local and remote branches
+that can be potentially pruned.
+"""
+
 import getpass
+from datetime import datetime
 from pathlib import Path
 from typing import List
 
 import yaml
-from datetime import datetime
 from git import Repo
 from gitdb.exc import BadName
 from github import Github
@@ -17,6 +22,9 @@ from . import log
 
 
 def months_old(date: datetime) -> int:
+    """
+    Returns how old a date is compared to now at month granularity.
+    """
     now = datetime.now()
     return (now.year - date.year) * 12 + now.month - date.month
 
@@ -26,12 +34,12 @@ def _get_github_merged_prs(config: Path, months: int) -> List['github.PullReques
         loaded_conf = yaml.safe_load(conf_file)
 
     if token := loaded_conf.get('token'):
-        gh = Github(token)
+        gh = Github(token)  # pylint: disable=invalid-name
     else:
         username = loaded_conf.get('user')
         assert username is not None
         pword = getpass.getpass(prompt=f"{username}'s password: ")
-        gh = Github(username, pword)
+        gh = Github(username, pword)  # pylint: disable=invalid-name
         del pword
 
     # Get PRs (issues of type PR) that pertain to the GitHub user, for this
@@ -47,6 +55,10 @@ def _get_github_merged_prs(config: Path, months: int) -> List['github.PullReques
 
 
 def log_branch_list(branch_loc: str, branches: List[str]) -> None:
+    """
+    Log string elements in a list that represent branch names.
+    Locations stands for private or remote, that will be logged in the output.
+    """
     if len(branches) > 0:
         log.info(
             'There are %s %s branches that can be pruned:',
@@ -59,6 +71,9 @@ def log_branch_list(branch_loc: str, branches: List[str]) -> None:
 
 
 def list_branches(config: Path, months: int) -> None:
+    """
+    Obtain and log all local and remote branches that are older than months.
+    """
     gh_merged = _get_github_merged_prs(config, months)
     repo = Repo()
     # Loop through local head commits and compare its SHA against GitHub head SHA.

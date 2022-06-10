@@ -3,6 +3,10 @@
 # This file is licensed under the GNU General Public License.
 # Please see the LICENSE file
 
+"""
+Configuration file stored at project's root .git folder.
+The file stores information required to interact with GH Rest API.
+"""
 
 from pathlib import Path
 from typing import Optional

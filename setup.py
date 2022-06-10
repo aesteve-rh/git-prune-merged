@@ -1,3 +1,5 @@
+"""git-prune-merged package setup."""
+
 from setuptools import setup, find_packages
 import src
 

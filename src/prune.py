@@ -3,7 +3,10 @@
 # This file is licensed under the GNU General Public License.
 # Please see the LICENSE file
 
-from pathlib import Path
+"""
+Handle the actual prune of all local and remote branches.
+"""
+
 from typing import List
 
 from git import Reference, Repo
@@ -22,25 +25,27 @@ def _prompt_confirmation(branch_name: str) -> bool:
             return False
 
 
-def prune_remote(config: Path, yes: bool, dry_run: bool,
-                 gh_pr: List['github.PullRequest']):
+def prune_remote(yes: bool, dry_run: bool, gh_pr: List['github.PullRequest']):
+    """
+    Prune remote branches based on its SHA.
+    """
     deleted = 0
     repo = Repo()
-    for gh_pr in gh_pr:
-        remote_name = f'origin/{gh_pr.head.ref}'
+    for preq in gh_pr:
+        remote_name = f'origin/{preq.head.ref}'
         try:
             sha = repo.rev_parse(remote_name)
         except BadName:
             continue
 
-        if str(sha) == gh_pr.head.sha:
+        if str(sha) == preq.head.sha:
             answer = True
             if not yes:
                 answer = _prompt_confirmation(remote_name)
             if answer:
                 log.debug("Removing %s...", remote_name)
                 if not dry_run:
-                    repo.remote().push(refspec=(f":{gh_pr.head.ref}"))
+                    repo.remote().push(refspec=(f":{preq.head.ref}"))
                 deleted += 1
                 log.info("[deleted] .... %s", remote_name)
             else:
@@ -49,12 +54,14 @@ def prune_remote(config: Path, yes: bool, dry_run: bool,
     log.info("All (%s) remote branches pruned.", deleted)
 
 
-def prune_local(config: Path, yes: bool, dry_run: bool,
-                gh_pr: List['github.PullRequest']):
+def prune_local(yes: bool, dry_run: bool, gh_pr: List['github.PullRequest']):
+    """
+    Prune local branches based on its SHA.
+    """
     deleted = 0
     repo = Repo()
     for head in repo.heads:
-        if any(head.commit.hexsha == gh_pr.head.sha for gh_pr in gh_pr):
+        if any(head.commit.hexsha == preq.head.sha for preq in gh_pr):
             answer = True
             if not yes:
                 answer = _prompt_confirmation(head.name)
@@ -64,7 +71,7 @@ def prune_local(config: Path, yes: bool, dry_run: bool,
                         Reference.delete(repo, head.path)
                     deleted += 1
                     log.info("[deleted] .... %s", head.name)
-                except Exception:
+                except OSError:
                     log.error("%s", head, exc_info=True)
             else:
                 log.info("Skipping %s", head.name)
