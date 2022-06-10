@@ -1,3 +1,5 @@
+"""Placeholder for centralized package logging and version control."""
+
 import logging
 
 
@@ -44,9 +46,9 @@ def add_file_handler():
     Create and add a FileHandler to log debug messages into a file.
     """
     # create file handler which logs even debug messages
-    fh = logging.FileHandler('.prune-merged.log')
-    fh.setLevel(logging.DEBUG)
+    fhandler = logging.FileHandler('.prune-merged.log')
+    fhandler.setLevel(logging.DEBUG)
     # create formatter and add it to the handlers
-    fh.setFormatter(
+    fhandler.setFormatter(
         logging.Formatter('%(levelname)s - %(message)s (%(filename)s:%(lineno)d)'))
-    log.addHandler(fh)
+    log.addHandler(fhandler)
