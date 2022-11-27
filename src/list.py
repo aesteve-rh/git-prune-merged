@@ -43,12 +43,18 @@ def _get_github_merged_prs(config: Path, months: int) -> List['github.PullReques
 
     # Get PRs (issues of type PR) that pertain to the GitHub user, for this
     # specific repo. Select those that are closed and merged.
-    issues = [pr.as_pull_request() for pr in gh.search_issues('', state='closed',
-              author=gh.get_user().login, repo=loaded_conf.get('repo'), type='pr')]
+    qualifiers = {
+        'state': 'closed',
+        'is': 'merged',
+        'author': gh.get_user().login,
+        'repo': loaded_conf.get('repo'),
+        'type': 'pr'
+    }
+    issues = [pr.as_pull_request() for pr in gh.search_issues('', **qualifiers)]
     if months:
         return [pr for pr in issues
-                if pr.merged and
-                (pr.closed_at is None or months_old(pr.closed_at) >= months)]
+                if pr.merged
+                and (pr.closed_at is None or months_old(pr.closed_at) >= months)]
 
     return [pr for pr in issues if pr.merged]
 
