@@ -1,7 +1,6 @@
-# Author: Albert Esteve <aesteve@redhat.com>
+# SPDX-FileCopyrightText: 2022 Albert Esteve <aesteve@redhat.com>
 #
-# This file is licensed under the GNU General Public License.
-# Please see the LICENSE file
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 """
 Configuration file stored at project's root .git folder.

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Albert Esteve <aesteve@redhat.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 """git-prune-merged package setup."""
 
 from setuptools import setup, find_packages

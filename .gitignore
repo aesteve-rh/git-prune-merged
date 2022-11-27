@@ -1,7 +1,13 @@
+# SPDX-FileCopyrightText: 2022 Albert Esteve <aesteve@redhat.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # Ignore all hidden files by default
 .*
 # Explicitely include these hidden files
 !.gitignore
+!.reuse
+!.github
 
 # Distribution / packaging
 build/
