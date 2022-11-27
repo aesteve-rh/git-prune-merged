@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Albert Esteve <aesteve@redhat.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 """Placeholder for centralized package logging and version control."""
 
 import logging

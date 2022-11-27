@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2022 Albert Esteve <aesteve@redhat.com>
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 # git-prune-merged
 
 Git plugin to help you keep repository clean from the command line, by
