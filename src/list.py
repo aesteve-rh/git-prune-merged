@@ -9,10 +9,10 @@ that can be potentially pruned.
 
 import getpass
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from pathlib import Path
 from typing import List, Optional
 
+from dateutil.relativedelta import relativedelta
 import yaml
 from git import Repo
 from gitdb.exc import BadName
@@ -22,6 +22,10 @@ from . import log
 
 
 class Branches:
+    # pylint: disable=too-few-public-methods
+    """
+    Contains generic information in order to query merged remote branches.
+    """
 
     def __init__(self, config: Path, months: int) -> None:
         self._config: Path = config
@@ -30,6 +34,10 @@ class Branches:
 
 
 class GithubBranches(Branches):
+    # pylint: disable=too-few-public-methods
+    """
+    Github specialization for the Branches class.
+    """
 
     def __init__(self, config: Path, months: int) -> None:
         super().__init__(config, months)
@@ -52,6 +60,10 @@ class GithubBranches(Branches):
 
     @property
     def branches(self) -> List['github.PullRequest']:
+        """
+        Search for all PR issues that pertain to the current user, repository,
+        that have been closed and merged.
+        """
         assert self._gh is not None
         # Get PRs (issues of type PR) that pertain to the GitHub user, for this
         # specific repo. Select those that are closed and merged.
