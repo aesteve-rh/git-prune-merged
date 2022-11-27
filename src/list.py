@@ -9,6 +9,7 @@ that can be potentially pruned.
 
 import getpass
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 from pathlib import Path
 from typing import List, Optional
 
@@ -23,8 +24,8 @@ from . import log
 class Branches:
 
     def __init__(self, config: Path, months: int) -> None:
-        self._config = config
-        self._months = months
+        self._config: Path = config
+        self._months: int = months
         self._repo: str = ''
 
 
@@ -50,7 +51,7 @@ class GithubBranches(Branches):
             del pword
 
     @property
-    def branches(self):
+    def branches(self) -> List['github.PullRequest']:
         assert self._gh is not None
         # Get PRs (issues of type PR) that pertain to the GitHub user, for this
         # specific repo. Select those that are closed and merged.
@@ -61,21 +62,11 @@ class GithubBranches(Branches):
             'repo': self._repo,
             'type': 'pr'
         }
-        issues = [pr.as_pull_request() for pr in self._gh.search_issues('', **qualifiers)]
         if self._months:
-            return [pr for pr in issues
-                    if pr.merged
-                    and (pr.closed_at is None or months_old(pr.closed_at) >= self._months)]
+            months_old = datetime.now() - relativedelta(months=self._months)
+            qualifiers['closed'] = f'>{months_old.strftime("%Y-%m-%d")}'
 
-        return [pr for pr in issues if pr.merged]
-
-
-def months_old(date: datetime) -> int:
-    """
-    Returns how old a date is compared to now at month granularity.
-    """
-    now = datetime.now()
-    return (now.year - date.year) * 12 + now.month - date.month
+        return [pr.as_pull_request() for pr in self._gh.search_issues('', **qualifiers)]
 
 
 def log_branch_list(branch_loc: str, branches: List[str]) -> None:

@@ -10,7 +10,7 @@ import src
 with open("README.md", "r", encoding="utf8") as readme_file:
     readme = readme_file.read()
 
-requirements = ["Click", "gitpython>3.1", "pygithub>=1.55", "pyyaml>=6.0"]
+requirements = ["Click", "gitpython>3.1", "pygithub>=1.55", "pyyaml>=6.0", "python-dateutil"]
 
 setup(
     name="git-prune-merged",
