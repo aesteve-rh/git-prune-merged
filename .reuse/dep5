@@ -1,0 +1,10 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: git-prune-merged
+Upstream-Contact: Albert Esteve <aesteve@redhat.com>
+Source: https://github.com/aesteve-rh/git-prune-merged
+
+# Sample paragraph, commented out:
+#
+# Files: src/*
+# Copyright: $YEAR $NAME <$CONTACT>
+# License: ...
