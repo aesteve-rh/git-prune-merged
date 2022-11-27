@@ -10,7 +10,7 @@ that can be potentially pruned.
 import getpass
 from datetime import datetime
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 import yaml
 from git import Repo
@@ -20,43 +20,62 @@ from github import Github
 from . import log
 
 
+class Branches:
+
+    def __init__(self, config: Path, months: int) -> None:
+        self._config = config
+        self._months = months
+        self._repo: str = ''
+
+
+class GithubBranches(Branches):
+
+    def __init__(self, config: Path, months: int) -> None:
+        super().__init__(config, months)
+        self._gh: Optional[Github] = None
+        self._create_github()
+
+    def _create_github(self) -> Github:
+        with open(self._config, 'r', encoding='utf-8') as conf_file:
+            loaded_conf = yaml.safe_load(conf_file)
+
+        self._repo = loaded_conf.get('repo')
+        if token := loaded_conf.get('token'):
+            self._gh = Github(token)  # pylint: disable=invalid-name
+        else:
+            username = loaded_conf.get('user')
+            assert username is not None
+            pword = getpass.getpass(prompt=f"{username}'s password: ")
+            self._gh = Github(username, pword)  # pylint: disable=invalid-name
+            del pword
+
+    @property
+    def branches(self):
+        assert self._gh is not None
+        # Get PRs (issues of type PR) that pertain to the GitHub user, for this
+        # specific repo. Select those that are closed and merged.
+        qualifiers = {
+            'state': 'closed',
+            'is': 'merged',
+            'author': self._gh.get_user().login,
+            'repo': self._repo,
+            'type': 'pr'
+        }
+        issues = [pr.as_pull_request() for pr in self._gh.search_issues('', **qualifiers)]
+        if self._months:
+            return [pr for pr in issues
+                    if pr.merged
+                    and (pr.closed_at is None or months_old(pr.closed_at) >= self._months)]
+
+        return [pr for pr in issues if pr.merged]
+
+
 def months_old(date: datetime) -> int:
     """
     Returns how old a date is compared to now at month granularity.
     """
     now = datetime.now()
     return (now.year - date.year) * 12 + now.month - date.month
-
-
-def _get_github_merged_prs(config: Path, months: int) -> List['github.PullRequest']:
-    with open(config, 'r', encoding='utf-8') as conf_file:
-        loaded_conf = yaml.safe_load(conf_file)
-
-    if token := loaded_conf.get('token'):
-        gh = Github(token)  # pylint: disable=invalid-name
-    else:
-        username = loaded_conf.get('user')
-        assert username is not None
-        pword = getpass.getpass(prompt=f"{username}'s password: ")
-        gh = Github(username, pword)  # pylint: disable=invalid-name
-        del pword
-
-    # Get PRs (issues of type PR) that pertain to the GitHub user, for this
-    # specific repo. Select those that are closed and merged.
-    qualifiers = {
-        'state': 'closed',
-        'is': 'merged',
-        'author': gh.get_user().login,
-        'repo': loaded_conf.get('repo'),
-        'type': 'pr'
-    }
-    issues = [pr.as_pull_request() for pr in gh.search_issues('', **qualifiers)]
-    if months:
-        return [pr for pr in issues
-                if pr.merged
-                and (pr.closed_at is None or months_old(pr.closed_at) >= months)]
-
-    return [pr for pr in issues if pr.merged]
 
 
 def log_branch_list(branch_loc: str, branches: List[str]) -> None:
@@ -79,7 +98,7 @@ def list_branches(config: Path, months: int) -> None:
     """
     Obtain and log all local and remote branches that are older than months.
     """
-    gh_merged = _get_github_merged_prs(config, months)
+    gh_merged = GithubBranches(config, months).branches
     repo = Repo()
     # Loop through local head commits and compare its SHA against GitHub head SHA.
     local_branches = []
