@@ -15,7 +15,7 @@ import click
 from . import __version__, add_file_handler, log
 from .config import DEFAULT_CFG_PATH, create_config
 from .exceptions import exception_handler
-from .list import _get_github_merged_prs, list_branches
+from .list import list_branches, GithubBranches
 from .prune import prune_local, prune_remote
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -66,7 +66,7 @@ def cli(ctx, debug: bool, configuration: Path, local: bool,
         add_file_handler()
     if ctx.invoked_subcommand is None:
         # With no subcommmand, we prune the branches
-        gh_pr = _get_github_merged_prs(configuration, months)
+        gh_pr = GithubBranches(configuration, months).branches
         if local or all_branches:
             prune_local(yes, dry_run, gh_pr)
         if not local or all_branches:
