@@ -95,10 +95,11 @@ Although branches can be [automatically deleted after merge](https://docs.github
 these cases (e.g., git garbage collector), it is not always posible or
 desirable to change the configuration of a project.
 
-Currently, this plugin works only in GitHub-hosted repositories. The plugin
-discerns whether a branch has been merged by exploring the user's GitHub
-pull requests (PR). By looping through all the 'closed and merged' PRs for the
-user, and comparing the HEAD SHA against the local and remote HEAD SHAs, it
+Currently, this plugin works only in GitHub-hosted repositories, using its
+REST API to explore the remotes. The plugin discerns whether a branch has
+been merged by looking for the user's GitHub pull requests (PR).
+By looping through all the 'closed and merged' PRs for the user,
+and comparing the HEAD SHA against the local and remote HEAD SHAs, it
 is able to discern which branches can be safely pruned. Using SHAs is a secure
 way to do this, since SHA is unique. Using branch name could lead to
 wrongfully pruned branches.
@@ -111,6 +112,14 @@ wrongfully pruned branches.
 - Using SHAs to ensure that the branches that will be pruned are the ones that were
 integrated.
 - Allow to prune only older branches to month granularity.
+
+## Inspiration
+
+This project is partially inspired by 
+[git-delete-merged-branches](https://github.com/hartwork/git-delete-merged-branches).
+
+Despite taking a different approach, `git-prune-merged` and `git-delete-merged-branches`
+are similar solutions that can help keeping your repository clean of old branches.
 
 ## Support
 
